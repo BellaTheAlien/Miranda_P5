@@ -347,6 +347,11 @@ def generate_successors(population):
     results = []
     # STUDENT Design and implement this
     # Hint: Call generate_children() on some individuals and fill up results.
+    # using the random selection of parents and the children generation method is a indvidual selection
+    for individuals in population:
+        partner = random.choice(population)
+        children = individuals.generate_children(partner)
+        results.extend(children)
     return results
 
 
