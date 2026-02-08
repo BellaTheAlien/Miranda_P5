@@ -67,12 +67,13 @@ class Individual_Grid(object):
         # STUDENT implement a mutation operator, also consider not mutating this individual
         # STUDENT also consider weighting the different tile types so it's not uniformly random
         # STUDENT consider putting more constraints on this to prevent pipes in the air, etc
-
+        mutattion_rate = 0.05 # 5% mutation rate per tile
         left = 1
         right = width - 1
         for y in range(height):
             for x in range(left, right):
-                pass
+                if random.random() < mutattion_rate:
+                    genome[y][x] = random.choice(options)
         return genome
 
     # Create zero or more children from self and other
@@ -80,15 +81,17 @@ class Individual_Grid(object):
         new_genome = copy.deepcopy(self.genome)
         # Leaving first and last columns alone...
         # do crossover with other
-        left = 1
-        right = width - 1
+        crossocer_point = random.randint(1, width - 2)
+        # left = 1
+        # right = width - 1
         for y in range(height):
-            for x in range(left, right):
+            for x in range(crossocer_point, width -1):
                 # STUDENT Which one should you take?  Self, or other?  Why?
                 # STUDENT consider putting more constraints on this to prevent pipes in the air, etc
-                pass
+                new_genome[y][x] = other.genome[y][x]
         # do mutation; note we're returning a one-element tuple here
-        return (Individual_Grid(new_genome),)
+        mutated_genome = self.mutate(new_genome)
+        return (Individual_Grid(mutated_genome),)
 
     # Turn the genome into a level string (easy for this genome)
     def to_level(self):
@@ -348,9 +351,19 @@ def generate_successors(population):
     # STUDENT Design and implement this
     # Hint: Call generate_children() on some individuals and fill up results.
     # using the random selection of parents and the children generation method is a indvidual selection
-    for individuals in population:
+
+    # elistism selction: getting the best individuals for the next gernation
+    best = max(population, key=lambda x: x.fitness())
+    results.append(best)
+
+# tournament selection:
+    while len(results) < len(population):
+        parent1 = random.choice(population)
+        parent2 = random.choice(population)
+
+        parent = parent1 if parent1.fitness() > parent2.fitness() else parent2
         partner = random.choice(population)
-        children = individuals.generate_children(partner)
+        children = parent.generate_children(partner)
         results.extend(children)
     return results
 
