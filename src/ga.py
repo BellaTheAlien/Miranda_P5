@@ -74,11 +74,26 @@ class Individual_Grid(object):
         for y in range(height - 1):  # to leave to floor alone 
             for x in range(left, right):
                 if random.random() < mutattion_rate:
-                    genome[y][x] = random.choice(options)
+                    tile = random.choice(options)
 
                     # adding a constraint to avoid pipes in the air
-                    if genome[y][x] in ["|", "T"] and genome[y + 1][x] == "-":
-                        genome[y][x] = "-"
+                    if tile in ["|", "T"]:
+                        # picking a random height for the pipe, between 2 and 4 so mario can jump it
+                        pipe_height = random.randint(2, 4)
+                        for h in range(pipe_height):
+                            current_y = height - 1 - h
+                            genome[current_y][x] = "T" if h == pipe_height - 1 else "|"
+
+                    # enamies constraint: so that they spawn in the floor or on top of blocks
+                    elif tile == "E":
+                        genome[height - 2][x] = "E"
+                    
+                    # blocks constraint: keeping blocks at jumpable heights
+                    elif tile in ["X", "B", "?", "M"]:
+                        jump_y = random.randint(height - 6, height - 2) # keeping blocks at jumpable heights; 
+                        genome[jump_y][x] = tile
+                    else:
+                        genome[y][x] = tile
 
         return genome
 

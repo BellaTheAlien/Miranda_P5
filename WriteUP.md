@@ -12,3 +12,7 @@ In the generate children the crossover I choose to implement is a single point c
 For the mutate function I choose to have a "changed" in the generation in a rate of 0.02 or 2% for each tile. Meaning that each tile has a 2% changce of being mutated. In my first addtion of the code I tryied a 5% rate mutation.
 
 For my added constraints I first added a limater for pipes generating in the air, checking if there is a pipe or top of a pipe adove an empty space; if there is we change the pipe to an empty space
+
+Then theres a constraint on enemy genration, so that they stay near the ground. They are limited to the floor on y axies
+
+Next theres a constraint on the many blocks, where they are limited to keep a jumpable hieight, where I set a jumaple setting of 2 - 6 blocks/tiles so that mario can jump them.
