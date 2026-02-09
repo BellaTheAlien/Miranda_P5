@@ -9,4 +9,6 @@ In making the generate successeors function I choose have a elistism and tournam
 In the generate children the crossover I choose to implement is a single point crossover. To get the the data to switch between the parents. Getting each the genration to switch from the parents data, so each level genration flips from thier parent data 
 
 # mutate
-For the mutate function I choose to have a "changed" in the generation in a rate of 0.05 or 5% for each tile. Meaning that each tile has a 5% changce of being mutated 
+For the mutate function I choose to have a "changed" in the generation in a rate of 0.02 or 2% for each tile. Meaning that each tile has a 2% changce of being mutated. In my first addtion of the code I tryied a 5% rate mutation.
+
+For my added constraints I first added a limater for pipes generating in the air, checking if there is a pipe or top of a pipe adove an empty space; if there is we change the pipe to an empty space

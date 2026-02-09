@@ -67,13 +67,19 @@ class Individual_Grid(object):
         # STUDENT implement a mutation operator, also consider not mutating this individual
         # STUDENT also consider weighting the different tile types so it's not uniformly random
         # STUDENT consider putting more constraints on this to prevent pipes in the air, etc
-        mutattion_rate = 0.05 # 5% mutation rate per tile
+        mutattion_rate = 0.02 # 2% mutation rate per tile
+
         left = 1
         right = width - 1
-        for y in range(height):
+        for y in range(height - 1):  # to leave to floor alone 
             for x in range(left, right):
                 if random.random() < mutattion_rate:
                     genome[y][x] = random.choice(options)
+
+                    # adding a constraint to avoid pipes in the air
+                    if genome[y][x] in ["|", "T"] and genome[y + 1][x] == "-":
+                        genome[y][x] = "-"
+
         return genome
 
     # Create zero or more children from self and other
@@ -115,12 +121,24 @@ class Individual_Grid(object):
     def random_individual(cls):
         # STUDENT consider putting more constraints on this to prevent pipes in the air, etc
         # STUDENT also consider weighting the different tile types so it's not uniformly random
-        g = [random.choices(options, k=width) for row in range(height)]
-        g[15][:] = ["X"] * width
-        g[14][0] = "m"
-        g[7][-1] = "v"
-        g[8:14][-1] = ["f"] * 6
-        g[14:16][-1] = ["X", "X"]
+        new_individual = cls.empty_individual()
+        g = new_individual.genome # [random.choices(options, k=width) for row in range(height)]
+
+        # only place randome tiles in the "playable" area, adove the floor and away from edges
+        # placing 20 - 50 random tiles to start
+        for _ in range(random.randint(20, 50)):
+            x = random.randint(1, width - 10) # leave some space right edge
+            y = random.randint(2, height - 2) # leave some space for floor and flag
+            g[y][x] = random.choice(options)
+        # g[15][:] = ["X"] * width
+        # g[14][0] = "m"
+        # g[7][-1] = "v"
+        # g[8:14][-1] = ["f"] * 6
+        # g[14:16][-1] = ["X", "X"]
+
+        # so we don't overwrite the floor
+        if g[y][x] == "-":
+            g[y][x] = random.choice(options)
         return cls(g)
 
 
