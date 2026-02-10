@@ -102,11 +102,11 @@ class Individual_Grid(object):
         new_genome = copy.deepcopy(self.genome)
         # Leaving first and last columns alone...
         # do crossover with other
-        crossocer_point = random.randint(1, width - 2)
+        crossover_point = random.randint(1, width - 2)
         # left = 1
         # right = width - 1
         for y in range(height):
-            for x in range(crossocer_point, width -1):
+            for x in range(crossover_point, width -1):
                 # STUDENT Which one should you take?  Self, or other?  Why?
                 # STUDENT consider putting more constraints on this to prevent pipes in the air, etc
                 new_genome[y][x] = other.genome[y][x]
@@ -376,7 +376,7 @@ class Individual_DE(object):
         return Individual_DE(g)
 
 
-Individual = Individual_Grid
+Individual = Individual_DE # Individual_Grid
 
 
 def generate_successors(population):
@@ -385,17 +385,23 @@ def generate_successors(population):
     # Hint: Call generate_children() on some individuals and fill up results.
     # using the random selection of parents and the children generation method is a indvidual selection
 
+    # add a check if one of the parents are empty,
     # elistism selction: getting the best individuals for the next gernation
     best = max(population, key=lambda x: x.fitness())
     results.append(best)
 
-# tournament selection:
+    # tournament selection:
     while len(results) < len(population):
         parent1 = random.choice(population)
         parent2 = random.choice(population)
 
         parent = parent1 if parent1.fitness() > parent2.fitness() else parent2
         partner = random.choice(population)
+
+        # adding a check to make sure we don't generate children from empty individuals, which can cause errors in the DE implementation
+        if len(parent.genome) == 0 or len(partner.genome) == 0:
+            continue
+        
         children = parent.generate_children(partner)
         results.extend(children)
     return results
@@ -440,7 +446,12 @@ def ga():
                             f.write("".join(row) + "\n")
                 generation += 1
                 # STUDENT Determine stopping condition
+                # making the stop condition a "20 generations without improvement"
                 stop_condition = False
+                if generation > 20:
+                    best = max(population, key=Individual.fitness)
+                    if best.fitness() <= max(population, key=lambda x: x.fitness()).fitness():
+                        stop_condition = True
                 if stop_condition:
                     break
                 # STUDENT Also consider using FI-2POP as in the Sorenson & Pasquier paper
